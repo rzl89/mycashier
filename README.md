@@ -29,32 +29,6 @@ note: Pastikan sudah terinstall web server dan database (aplikasi xampp) dan com
 
 ###### View Login
 
-![Login](/assets/ss/login.png)
-
-###### Login Success (use Sweet Alert 2)
-
-![Success Login](/assets/ss/berhasil-login.png)
-
-###### View Dashboard
-
-![Dashboard](/assets/ss/dashboard.png)
-
-###### Form Add User (With Modal, use ajax)
-
-![Add User](/assets/ss/add-user.png)
-
-###### Delete Confirm (Use Sweet Alert 2)
-
-![Delete Confirm](/assets/ss/konfirmation.png)
-
-###### Barcode & Qrcode Generator
-
-![Barcode Qrcode](/assets/ss/barcode-qrcode.png)
-
-###### Payment Sale
-
-![Barcode Qrcode](/assets/ss/payment.png)
-
 ## Resources
 
 - [CodeIgniter 3](https://codeigniter.com/userguide3/index.html)

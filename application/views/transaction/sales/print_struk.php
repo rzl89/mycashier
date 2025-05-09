@@ -54,106 +54,69 @@
 <body onload="window.print()">
     <div class="content">
         <div class="title">
-            <b>BSC-MART</b>
-            <br>
-            Jl. Raya Taktakan, Cilowong, Kec. Taktakan, Kota Serang, Banten 42162
+            <b>< BSC-MART></BSC-MART></b><br>
+            Jl. Raya taktakan, cilowong, kec. taktakan<br>
+            SMKN 5 KOTA SERANG<br>
+            <hr style="border-top:1px dashed #000; margin:8px 0;">
         </div>
-
-        <div class="head">
-            <table cellspacing="0" cellpadding="0">
-                <tr>
-                    <td style="width:200px;">
-                        <?= date('d/m/Y', strtotime($sale->date)) . " " . date('H:i', strtotime($sale->sale_created)); ?>
-                    </td>
-                    <td>Cashier</td>
-                    <td style="text-align: center;width:10px;">:</td>
-                    <td style="text-align: right;">
-                        <?= ucfirst($sale->user_name); ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <?= $sale->invoice; ?>
-                    </td>
-                    <td>Customer</td>
-                    <td style="text-align: center;">:</td>
-                    <td style="text-align: right;">
-                        <?= $sale->customer_id != null ? $sale->customer_id : "Umum" ?>
-                    </td>
-                </tr>
-            </table>
+        <div style="text-align:center; margin-top:5px;">
+            Tanggal: <?= date('d/m/Y', strtotime($sale->date)); ?><br>
+            Waktu: <?= date('H:i:s', strtotime($sale->sale_created)); ?>
         </div>
-
-        <div class="transaction">
-            <table class="transaction-table" cellspacing="0" cellpadding="0">
-                <?php $arr_discount = [];
-                foreach ($sale_detail as $sd) { ?>
-                    <tr>
-                        <td style="width: 165px;"><?= $sd->name; ?></td>
-                        <td><?= $sd->qty; ?></td>
-                        <td style="text-align: right;width:60px;"><?= indo_currency($sd->price); ?></td>
-                        <td style="text-align: right;width:60px;">
-                            <?= indo_currency(($sd->price - $sd->discount_item) * $sd->qty); ?>
-                        </td>
-                    </tr>
-                    <?php
-                    if ($sd->discount_item > 0) {
-                        $arr_discount[] = $sd->discount_item;
-                    }
-                }
-                foreach ($arr_discount as $ad) { ?>
-                    <tr>
-                        <td></td>
-                        <td colspan="2" style="text-align: right;">Disc. <?= $ad + 1; ?></td>
-                        <td style="text-align: right;"><?= indo_currency($ad); ?></td>
-                    </tr>
-                <?php } ?>
-                <tr>
-                    <td colspan="4" style="border-bottom: 1px dashed;padding-top:5px;"></td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td style="text-align: right; padding-top:5px;">Sub Total</td>
-                    <td style="text-align: right; padding-top:5px;">
-                        <?= indo_currency($sale->total_price); ?>
-                    </td>
-                </tr>
-                <?php if ($sale->discount > 0) { ?>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td style="text-align: right; padding-top:5px;">Disc. Sale</td>
-                        <td style="text-align: right; padding-top:5px;">
-                            <?= indo_currency($sale->discount); ?>
-                        </td>
-                    </tr>
-                <?php } ?>
-                <tr>
-                    <td colspan="2"></td>
-                    <td style="text-align: right; padding-top:5px;">Grand Total</td>
-                    <td style="text-align: right; padding-top:5px;">
-                        <?= indo_currency($sale->final_price); ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td style="text-align: right; padding-top:5px;">Cash</td>
-                    <td style="text-align: right; padding-top:5px;">
-                        <?= indo_currency($sale->cash); ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td style="text-align: right;">Change</td>
-                    <td style="text-align: right;">
-                        <?= indo_currency($sale->uang_kembalian); ?>
-                    </td>
-                </tr>
-            </table>
+        <hr style="border-top:1px dashed #000; margin:8px 0;">
+        <table style="width:100%; font-size:12px;">
+            <tr>
+                <th align="left">Barang</th>
+                <th align="center">Jml</th>
+                <th align="right">Harga</th>
+            </tr>
+            <?php foreach ($sale_detail as $sd) { ?>
+            <tr>
+                <td><?= $sd->name; ?></td>
+                <td align="center"><?= $sd->qty; ?></td>
+                <td align="right">Rp <?= number_format(($sd->price - $sd->discount_item) * $sd->qty,0,',','.'); ?></td>
+            </tr>
+            <?php } ?>
+        </table>
+        <hr style="border-top:1px dashed #000; margin:8px 0;">
+        <table style="width:100%; font-size:12px;">
+            <tr>
+                <td>Subtotal:</td>
+                <td align="right">Rp <?= number_format($sale->total_price,0,',','.'); ?></td>
+            </tr>
+            <tr>
+                <td>Pajak:</td>
+                <td align="right">Rp 0</td>
+            </tr>
+            <tr>
+                <td><b>Total:</b></td>
+                <td align="right"><b>Rp <?= number_format($sale->final_price,0,',','.'); ?></b></td>
+            </tr>
+        </table>
+        <hr style="border-top:1px dashed #000; margin:8px 0;">
+        <table style="width:100%; font-size:12px;">
+            <tr>
+                <td>Metode Pembayaran:</td>
+                <td align="right">Tunai</td>
+            </tr>
+            <tr>
+                <td>Jumlah Diterima:</td>
+                <td align="right">Rp <?= number_format($sale->cash,0,',','.'); ?></td>
+            </tr>
+            <tr>
+                <td>Kembalian:</td>
+                <td align="right">Rp <?= number_format($sale->uang_kembalian,0,',','.'); ?></td>
+            </tr>
+        </table>
+        <hr style="border-top:1px dashed #000; margin:8px 0;">
+        <div style="text-align:center; margin:10px 0;">
+            
         </div>
         <div class="thanks">
-            ---Thank You---
-            <br>
-            BSC-MART
+            Terima kasih telah berbelanja<br>dengan kami!
+        </div>
+        <div style="text-align:center; font-size:10px; margin-top:8px;">
+            This receipt is evidence of a transaction<br>and should be kept for your records.
         </div>
     </div>
 </body>
