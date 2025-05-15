@@ -33,6 +33,8 @@ class Item extends CI_Controller
     public function save()
     {
         $post = $this->input->post();
+        $post['cost'] = $this->input->post('cost');
+        $post['profit'] = $this->input->post('profit');
         if (!empty($_FILES['gambar']['name'])) {
             $config['upload_path']   = './uploads/product/';
             $config['allowed_types'] = 'gif|jpg|png|jpeg';
@@ -44,17 +46,44 @@ class Item extends CI_Controller
                 $post['gambar'] =  $this->upload->data('file_name');
 
                 $this->item_m->save($post);
+                // Tambah histori stok in jika stok awal > 0
+                if(isset($post['stock']) && (int)$post['stock'] > 0) {
+                    $this->load->model('stock_m');
+                    $stock_data = [
+                        'item_id' => $this->db->insert_id(),
+                        'type' => 'in',
+                        'detail' => 'Stok Awal',
+                        'supplier' => null,
+                        'qty' => $post['stock'],
+                        'date' => date('Y-m-d'),
+                    ];
+                    $this->stock_m->add_stock_in($stock_data);
+                    $this->item_m->update_stock_in(['item_id' => $stock_data['item_id'], 'qty' => $post['stock']]);
+                }
                 $this->session->set_flashdata('pesan', 'Data item berhasil ditambah.');
                 redirect('item');
             } else {
                 $error = array('error' => $this->upload->display_errors());
                 $post['gambar'] = "";
-                $this->session->set_flashdata('pesan', 'Gambar yang anda upload tidak sesuai, mohon ulangi.');
+                $this->session->set_flashdata('Gambar yang anda upload tidak sesuai, mohon ulangi.');
                 redirect('item');
             }
         } else {
             $post['gambar'] = "default.png";
             $this->item_m->save($post);
+            // Tambah histori stok in jika stok awal > 0
+            if(isset($post['stock']) && (int)$post['stock'] > 0) {
+                $this->load->model('stock_m');
+                $stock_data = [
+                    'item_id' => $this->db->insert_id(),
+                    'type' => 'in',
+                    'detail' => 'Stok Awal',
+                    'supplier' => null,
+                    'qty' => $post['stock'],
+                    'date' => date('Y-m-d'),
+                ];
+                $this->stock_m->add_stock_in($stock_data);
+            }
             $this->session->set_flashdata('pesan', 'Data item berhasil ditambah.');
             redirect('item');
         }
@@ -72,6 +101,8 @@ class Item extends CI_Controller
     public function update()
     {
         $post = $this->input->post();
+        $post['cost'] = $this->input->post('cost');
+        $post['profit'] = $this->input->post('profit');
         if (!empty($_FILES['gambar']['name'])) {
             $config['upload_path']   = './uploads/product/';
             $config['allowed_types'] = 'gif|jpg|png|jpeg';
@@ -96,6 +127,20 @@ class Item extends CI_Controller
         } else {
             $post['gambar'] = "default.png";
             $this->item_m->update($post);
+            // Tambah histori stok in jika stok awal > 0
+            if(isset($post['stock']) && (int)$post['stock'] > 0) {
+                $this->load->model('stock_m');
+                $stock_data = [
+                    'item_id' => $this->db->insert_id(),
+                    'type' => 'in',
+                    'detail' => 'Stok Awal',
+                    'supplier' => null,
+                    'qty' => $post['stock'],
+                    'date' => date('Y-m-d'),
+                ];
+                $this->stock_m->add_stock_in($stock_data);
+                $this->item_m->update_stock_in(['item_id' => $stock_data['item_id'], 'qty' => $post['stock']]);
+            }
             $this->session->set_flashdata('pesan', 'Data item berhasil diupdate.');
             redirect('item');
         }

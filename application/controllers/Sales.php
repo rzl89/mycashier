@@ -61,6 +61,39 @@ class Sales extends CI_Controller
             }
 
             $this->sale_m->add_sale_detail($row);
+            
+            // Pengurangan stok & log stock out otomatis
+            $this->load->model(['item_m','stock_m']);
+            foreach ($row as $detail) {
+                // Update stok barang
+                $this->item_m->update_stock_out(['item_id' => $detail['item_id'], 'qty' => $detail['qty']]);
+                // Catat log stock out
+                $stock_data = [
+                    'item_id' => $detail['item_id'],
+                    'type' => 'out',
+                    'detail' => 'Penjualan',
+                    'qty' => $detail['qty'],
+                    'date' => date('Y-m-d'),
+                    'user_id' => $this->session->userdata('userid')
+                ];
+                $this->stock_m->add_stock_out($stock_data);
+            }
+
+            // Generate barcode PNG untuk struk
+            if(isset($post['invoice'])) {
+                $barcodeData = $post['invoice'];
+                $barcodeFile = FCPATH.'uploads/barcode/struk-'.$barcodeData.'.png';
+                if(!file_exists(dirname($barcodeFile))) {
+                    mkdir(dirname($barcodeFile), 0777, true);
+                }
+                if(!file_exists($barcodeFile)) {
+                    if(!class_exists('Picqer\\Barcode\\BarcodeGeneratorPNG')) {
+                        require_once APPPATH.'third_party/Picqer/Barcode/BarcodeGeneratorPNG.php';
+                    }
+                    $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                    file_put_contents($barcodeFile, $generator->getBarcode($barcodeData, $generator::TYPE_CODE_128, 2, 40));
+                }
+            }
             $this->sale_m->del_cart(['user_id' => $this->session->userdata('userid')]);
 
             if ($this->db->affected_rows() > 0) {

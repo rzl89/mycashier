@@ -79,7 +79,7 @@
                                 <input type="number" name="qty" id="qty" class="form-control" autofocus>
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-success btn-flat" type="submit" name="in_add"><i class="fa fa-paper-plane"></i> Save</button>
+                                <button class="btn btn-success btn-flat" type="submit" name="in_add" id="btn-save"><i class="fa fa-paper-plane"></i> Save</button>
                                 <button type="reset" class="btn btn-default btn-flat">Reset</button>
                             </div>
                         </form>
@@ -166,6 +166,16 @@
             $('#unit_name').val(unit_name);
             $('#stock').val(stock);
             $('#modal-item').modal('hide');
-        })
+        });
+        $('#btn-save').on('click', function(e) {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            // Validasi sederhana
+            if($('#item_id').val() === '' || $('#qty').val() === '') {
+                alert('Mohon lengkapi data produk dan qty!');
+                return false;
+            }
+            form.submit();
+        });
     });
 </script>

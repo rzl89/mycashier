@@ -54,7 +54,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <i class="far fa-bell"></i>
-                        <span class="badge badge-danger navbar-badge">3</span>
+                        <span class="badge badge-danger navbar-badge">0</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <a href="#" class="dropdown-item">
@@ -96,8 +96,8 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="<?= base_url('assets/template/admin') ?>/index3.html" class="brand-link">
-                <img src="<?= base_url('assets/template/admin') ?>/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+            <a href="<?= base_url('assets/template/admin') ?>/index.html" class="brand-link">
+                <img src="<?= base_url('assets/template/admin') ?>/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-4" style="opacity: .6; width: 70px;px; height: 70px;px;">
                 <span class="brand-text font-weight-light">my<b>POS</b></span>
             </a>
 
@@ -106,7 +106,7 @@
                 <!-- Sidebar user (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="<?= base_url('assets/template/admin') ?>/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                        <img src="<?= base_url('assets/template/admin') ?>/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" style="width:60px; height:60px;">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block"><?= ucfirst($this->fungsi->user_login()->username); ?></a>
@@ -246,7 +246,7 @@
             <div class="float-right d-none d-sm-block">
                 <b>Version</b> 1.0
             </div>
-            <strong>Copyright &copy; <?= date('Y'); ?> <a href="http://adminlte.io">myPOS</a>.</strong> All rights
+            <strong>Copyright &copy; <?= date('Y'); ?> <a href="https://rizaldev.systeme.io/333d4a63" target="_blank">rizalDev</a>.</strong> All rights
             reserved.
         </footer>
 

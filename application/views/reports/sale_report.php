@@ -18,9 +18,11 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <!-- <div class="float-sm-right">
-                    <a href="<?= site_url('in/add') ?>" class="btn btn-success btn-sm"><i class="fa fa-plus"> Add Stock In</i></a>
-                </div> -->
+                <div class="float-right">
+                    <a href="<?= site_url('reports/export_excel'); ?>" class="btn btn-success btn-sm"><i class="fa fa-file-excel"></i> Export Excel</a>
+                    <a href="<?= site_url('reports/export_csv'); ?>" class="btn btn-info btn-sm"><i class="fa fa-file-csv"></i> Export CSV</a>
+                    <a href="<?= site_url('reports/export_pdf'); ?>" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> Export PDF</a>
+                </div>
             </div>
             <div class="flash-data" data-flashdata="<?= $this->session->flashdata('pesan') ?>">
             </div>
@@ -32,34 +34,61 @@
                         <tr>
                             <th style="width: 10px">No.</th>
                             <th>Invoice</th>
-                            <th>Name Customer</th>
-                            <th>Discount</th>
-                            <th>Note</th>
-                            <th>Date</th>
-                            <th>Petugas</th>
-                            <th>Action</th>
+                            <th>Tanggal & Waktu</th>
+                            <th>Kasir</th>
+                            <th>Pelanggan</th>
+                            <th>Total Sebelum Diskon</th>
+                            <th>Diskon</th>
+                            <th>Pajak</th>
+                            <th>Harga Modal (Cost)</th>
+                            <th>Keuntungan (Profit)</th>
+                            <th>Total Bayar</th>
+                            <th>Jumlah Transaksi</th>
+                            <th>Total Penjualan Hari Ini</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no = 1;
-                        foreach ($sale as $s) { ?>
+                        <?php 
+                        $no = 1;
+                        $total_penjualan_hari_ini = 0;
+                        $jumlah_transaksi = 0;
+                        $tanggal_hari_ini = date('Y-m-d');
+                        foreach ($sale as $s) { 
+                            $is_today = isset($s->date) && date('Y-m-d', strtotime($s->date)) == $tanggal_hari_ini;
+                            if ($is_today) {
+                                $total_penjualan_hari_ini += isset($s->final_price) ? $s->final_price : 0;
+                                $jumlah_transaksi++;
+                            }
+                        ?>
                             <tr>
                                 <td><?= $no++; ?></td>
                                 <td id="invoice"><?= $s->invoice; ?></td>
+                                <td><?= isset($s->date) ? date('Y-m-d H:i', strtotime($s->date)) : '-'; ?></td>
+                                <td style="text-align: center;"><span class="badge badge-secondary"><?= $s->user_name; ?></span></td>
                                 <td style="text-align: center;"><?= $s->customer_name != null ? $s->customer_name : "Umum"; ?></td>
-                                <td><?= indo_currency($s->discount) ?></td>
-                                <td><?= $s->note; ?></td>
-                                <td style="text-align: center;"><?= indo_date($s->date) ?></td>
-                                <td align="center">
-                                    <h5><span class="badge badge-secondary"><?= $s->user_name; ?></span></h5>
-                                </td>
-                                <td align="center">
-                                    <a class="btn btn-default btn-sm" onclick="showDetail(<?= $s->sale_id; ?>)"><i class=" fa fa-eye"></i>
-                                    </a>
-                                    <a href="javascript:;" onclick="printSale(<?= $s->sale_id; ?>)" style="text-decoration: none;" class="btn btn-danger btn-sm"><i class="fa fa-print"></i></a>
+                                <td><?= isset($s->total_price) ? indo_currency($s->total_price) : '-'; ?></td>
+                                <td><?= isset($s->discount) ? indo_currency($s->discount) : '-'; ?></td>
+                                <td><?= isset($s->tax) ? indo_currency($s->tax) : '0'; ?></td>
+                                <td><?= isset($s->cost) ? indo_currency($s->cost) : '-'; ?></td>
+                                <td><?= isset($s->profit) ? indo_currency($s->profit) : (isset($s->final_price) && isset($s->cost) ? indo_currency($s->final_price - $s->cost) : '-'); ?></td>
+                                <td><?= isset($s->final_price) ? indo_currency($s->final_price) : '-'; ?></td>
+                                <td><?= $is_today ? 1 : 0; ?></td>
+                                <td><?= $is_today ? indo_currency($s->final_price) : '-'; ?></td>
+                                <td>
+                                    <form action="<?= site_url('reports/delete_sale/'.$s->invoice) ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php } ?>
+                        <tr>
+                            <td colspan="11" style="text-align:right;"><b>Total Transaksi Hari Ini</b></td>
+                            <td><b><?= $jumlah_transaksi ?></b></td>
+                            <td><b><?= indo_currency($total_penjualan_hari_ini) ?></b></td>
+                            <td></td> <!-- Kosongkan kolom Aksi agar tetap total 14 -->
+                        </tr>
+
                     </tbody>
                 </table>
             </div>

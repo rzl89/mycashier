@@ -121,13 +121,17 @@ class Sale_m extends CI_Model
 
     public function get_sale($id = null)
     {
-        $this->db->select('*, customer.name as customer_name, user.name as user_name, t_sale.created as sale_created');
+        $this->db->select('t_sale.*, customer.name as customer_name, user.name as user_name, t_sale.created as sale_created, 
+            SUM(t_sale_detail.qty * t_sale_detail.price) as total_modal, 
+            (t_sale.final_price - SUM(t_sale_detail.qty * t_sale_detail.price)) as profit');
         $this->db->from('t_sale');
         $this->db->join('user', 't_sale.user_id=user.user_id');
         $this->db->join('customer', 't_sale.customer_id=customer.customer_id', 'left');
+        $this->db->join('t_sale_detail', 't_sale.sale_id = t_sale_detail.sale_id', 'left');
         if ($id != null) {
-            $this->db->where('sale_id', $id);
+            $this->db->where('t_sale.sale_id', $id);
         }
+        $this->db->group_by('t_sale.sale_id');
         $query = $this->db->get();
         return $query;
     }
@@ -152,5 +156,24 @@ class Sale_m extends CI_Model
         $this->db->order_by('t_sale_detail.qty', 'desc');
         $query = $this->db->get();
         return $query;
+    }
+
+    public function delete_by_invoice($invoice)
+    {
+        $this->db->where('invoice', $invoice);
+        $this->db->delete('t_sale');
+        // Jika ada detail penjualan, hapus juga
+        $this->db->where('invoice', $invoice);
+        $this->db->delete('t_sale_detail');
+        // Hapus histori stok terkait invoice
+        $this->db->where('invoice', $invoice);
+        $this->db->delete('t_stock');
+    }
+
+    public function delete_all_sales()
+    {
+        $this->db->empty_table('t_sale');
+        $this->db->empty_table('t_sale_detail');
+        $this->db->empty_table('t_stock');
     }
 }
